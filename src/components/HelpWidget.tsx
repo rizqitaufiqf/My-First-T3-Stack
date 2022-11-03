@@ -2,6 +2,7 @@ import { useState } from "react";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { IoMdSend } from "react-icons/io";
+import { trpc } from "../utils/trpc";
 
 type TMessage = {
   message: string;
@@ -10,10 +11,10 @@ type TMessage = {
 };
 
 export const HelpWidget = () => {
+  const createHelpRequestMutation =
+    trpc.helpRequest.createHelpRequest.useMutation();
   const [isChatDiplayed, setIsChatDisplayed] = useState(false);
-
   const [senderId, setSenderId] = useState("0");
-
   const [messages, setMessages] = useState<TMessage[]>([
     {
       message:
@@ -24,6 +25,11 @@ export const HelpWidget = () => {
     { message: "Hi!!", id: "asdasdas", senderId: "0" },
     { message: "test!!", id: "sqwe", senderId: "1" },
   ]);
+
+  const handleOpenSupportWidget = () => {
+    setIsChatDisplayed(true);
+    createHelpRequestMutation.mutate();
+  };
   return isChatDiplayed ? (
     <div className="fixed bottom-7 right-10 flex h-[30rem] w-72 flex-col justify-between rounded-md bg-gray-100">
       <AiOutlineCloseCircle
@@ -36,8 +42,8 @@ export const HelpWidget = () => {
             key={id}
             className={`mb-2 flex px-2 py-2 ${
               senderIds === senderId
-                ? "mr-2 justify-end rounded-bl-3xl rounded-tl-3xl rounded-tr-xl bg-gray-300 py-3 px-4"
-                : "ml-2 justify-start rounded-tl-xl rounded-br-3xl rounded-tr-3xl  bg-blue-300 py-3 px-4"
+                ? "mr-2 justify-end rounded-bl-xl rounded-tl-xl rounded-tr-xl bg-gray-300 py-3 px-4"
+                : "ml-2 justify-start rounded-tl-xl rounded-br-xl rounded-tr-xl  bg-blue-300 py-3 px-4"
             }`}
           >
             {message}
@@ -55,7 +61,7 @@ export const HelpWidget = () => {
     </div>
   ) : (
     <button
-      onClick={() => setIsChatDisplayed(!isChatDiplayed)}
+      onClick={handleOpenSupportWidget}
       className="fixed bottom-10 right-10 flex cursor-pointer items-center rounded-md bg-blue-400 p-3 font-semibold text-white hover:bg-blue-500"
     >
       <div>Our Support</div>
